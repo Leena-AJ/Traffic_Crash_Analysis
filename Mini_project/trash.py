@@ -95,12 +95,14 @@ LIMIT 5 ;
 """,
 
 "Top 5 streets with the highest injury rate, considering only streets with more than 100 crashes":"""
-SELECT STREET_NAME,AVG(INJURIES_TOTAL) AS INJURY_RATE,COUNT(*) AS TOTAL_CRASHES
+SELECT
+STREET_NAME,
+SUM(INJURIES_TOTAL > 0) * 100.0 / COUNT(*) AS INJURY_RATE
 FROM traffic_crash_data
 GROUP BY STREET_NAME
-HAVING TOTAL_CRASHES > 100
+HAVING COUNT(*) > 100
 ORDER BY INJURY_RATE DESC
-LIMIT 5 ;
+LIMIT 5;
 """,
 
 "For each year, identify the most common crash type":"""
@@ -129,12 +131,13 @@ WHEN CRASH_HOUR between 6 AND 11
 THEN 'MORNING'
 WHEN CRASH_HOUR between 12 AND 17
 THEN 'AFTERNOON'
-WHEN CRASH_HOUR between 17 AND 21
+WHEN CRASH_HOUR between 18 AND 21
 THEN 'EVENING'
 ELSE 'NIGHT'
 END AS CRASH_HOUR_BUCKET,
 COUNT(*) AS TOTAL_CRASHES
 FROM traffic_crash_data
+WHERE INJURIES_TOTAL > 0
 GROUP BY CRASH_HOUR_BUCKET
 ORDER BY TOTAL_CRASHES DESC;
 """,
@@ -200,7 +203,7 @@ if st.button("Run Query"):
              st.info("More crashes occur between 3pm to 5pm")
 
          elif selected_query =="Top 5 primary causes of crashes during night time (CRASH_HOUR ≥ 18)":
-             st.info("Unable to determine is the top cause for most crashes")
+             st.info("'Unable to determine' is the top cause for most crashes")
    
          elif selected_query =="Average number of injuries in daylight vs darkness conditions":
              st.info("Average crashes are slightly higher in darkness compared to daylight")
@@ -209,13 +212,13 @@ if st.button("Run Query"):
              st.info("Bicycle crossing sign and pedestrian crossing sign are the top two traffic control device which has recorded highest average injuries")
     
          elif selected_query =="Top 5 locations (latitude/longitude) with the highest crash frequency":
-             st.info(" ")
+             st.info("A few locations record significantly more crahses than other locations ")
     
          elif selected_query =="Top 5 streets with the highest injury rate, considering only streets with more than 100 crashes":
-             st.info(" ")
+             st.info("These streets have the highest injury rate among the streets with more than 100 crashes ")
     
          elif selected_query =="For each year, identify the most common crash type":
-             st.info("No Injury/Drive away is the common crash type for all the years")
+             st.info("'No Injury/Drive away' is the common crash type for all the years")
     
          elif selected_query =="Day of the week with the highest average crashes per hour":
              st.info("Average crashes per hour are high on Friday")
@@ -224,10 +227,10 @@ if st.button("Run Query"):
              st.info("Crashes are more in afternoon and lesser during night")
 
          elif selected_query =="Top 3 contributing causes for each crash type":
-             st.info("Unable to determine and Failing to yield right way are the two common causes for both the crash type")
+             st.info("'Unable to determine' and 'Failing to yield right way' are the two common causes for both the crash type")
 
          elif selected_query =="Year-over-year growth rate of crashes":
              st.info("Growth rate is very high in the year 2021 compared to all the other years")
 
          elif selected_query =="Find top 10 zones with highest crashes":
-             st.info(" ")
+             st.info("These zones are the top zones with high risk as they are more frequent crashes ")
