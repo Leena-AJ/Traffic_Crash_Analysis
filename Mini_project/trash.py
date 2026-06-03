@@ -110,8 +110,7 @@ elif page == "Insights":
     """,
 
     "Percentage of crashes that resulted in injuries for each crash type": """
-    SELECT CRASH_TYPE,COUNT(*) AS TOTAL ,COUNT(*) *100.0 / 
-    (SELECT COUNT(*) FROM traffic_crash_data) AS PERCENTAGE
+    SELECT CRASH_TYPE,ROUND(SUM(CASE WHEN INJURIES_TOTAL > 0 THEN 1 ELSE 0 END) * 100.0 / COUNT(*) ,2) AS PERCENTAGE
     FROM traffic_crash_data
     GROUP BY CRASH_TYPE
     ORDER BY PERCENTAGE
